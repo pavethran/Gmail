@@ -1,3 +1,14 @@
+1.first we have create google cloud platform new project to create api credentials 
+2.And then Enable Gmail Api in the library
+3. go  to credentials click create add oAuth client if you created download the file oAuth client
+3. create service Account to give gmail account 
+4. create app in oAuth consent screen and publish 
+5. run the code u get token.json file 
+
+
+
+
+
 # Gmail_api
 A standalone Python script that integrates with Gmail API and performs some rule based operations on emails.
 
