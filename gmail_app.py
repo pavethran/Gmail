@@ -1,6 +1,7 @@
-from __future__ import print_function
+
 import os.path
 import base64,email
+import json
 import sqlalchemy as db
 from sqlalchemy import Table, Column, Integer, String, VARCHAR , MetaData
 from requests import Session
@@ -53,6 +54,7 @@ def get_email_content(message_id):
     msg_str = base64.urlsafe_b64decode(results['raw'].encode('ASCII'))
     mine_msg = email.message_from_bytes(msg_str)
     data = {'to': mine_msg['To'], 'from': mine_msg['From'], 'date': mine_msg['Date'], 'subject': mine_msg['Subject']}
+    # print (data)
     return data
 
 def store():
@@ -64,6 +66,20 @@ def store():
     print('logged successfully')
     conn.close()
 
+def rules():
+    engine = db.create_engine('sqlite:///gmail.db',echo=True)
+    conn = engine.connect()
+    rules = json.load(open('rules.json'))
+    for rule in rules["1"]["criteria"]:
+        print(rule['name'], rule['value'])
+        query = "SELECT mail_from  FROM mail WHERE " + "mail_" + rule["name"] + " LIKE '" + rule["value"][1] + "'"
+        result = conn.execute(query)
+        print(result)
+        service = get_gmail_service()
+        service.users().messages().modify(userId='me', id='17a42afd4bf4fa39', body={'addLabelIds': ['STARRED']}).execute()
+
 if __name__ == '__main__':
     # get_email_list()
-    store()
+    # get_email_content('17a42afd4bf4fa39')
+    # store()
+    rules()
