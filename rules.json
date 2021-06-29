@@ -1,0 +1,77 @@
+{
+    "1": {
+        "predicate": ["ALL"],
+        "criteria": [{
+                "name": "from",
+                "value": [
+                    "contains",
+                    "17a42afd4bf4fa39"
+                ]
+            },
+            {
+                "name": "to",
+                "value": [
+                    "contains",
+                    "pavethran.earney@gmail.com"
+                ]
+            },
+            {
+                "name": "subject",
+                "value": [
+                    "contains",
+                    "Working"
+                ]
+            },
+            {
+                "name": "date",
+                "value": [
+                    "contains",
+                    "Fri, 25 Jun 2021"
+                ]
+            }
+
+        ],
+        "action": {
+            "addLabelIds": ["SENT"],
+            "removeLabelIds": []
+        }
+    },
+
+
+    "2": {
+        "predicate": ["ANY"],
+        "criteria": [{
+                "name": "from",
+                "value": [
+                    "contains",
+                    "17a42afd4bf4fa39"
+                ]
+            },
+            {
+                "name": "to",
+                "value": [
+                    "contains",
+                    "pavethran.earney@gmail.com"
+                ]
+            },
+            {
+                "name": "subject",
+                "value": [
+                    "contains",
+                    "working"
+                ]
+            },
+            {
+                "name": "date",
+                "value": [
+                    "contains",
+                    "Fri, 25 Jun 2021"
+                ]
+            }
+        ],
+        "action": {
+            "addLabelIds": ["RECEIVED"],
+            "removeLabelIds": []
+        }
+    }
+}
