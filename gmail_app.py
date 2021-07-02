@@ -42,6 +42,18 @@ def get_gmail_service():
     service = build('gmail', 'v1', credentials=creds)
     return service
 
+def printlabels():
+    service = get_gmail_service()
+    results = service.users().labels().list(userId='me').execute()
+    labels = results.get('labels', [])
+
+    if not labels:
+        print('No labels found.')
+    else:
+        print('Labels:')
+        for label in labels:
+            print(label['name'])
+
 def get_email_list():
     service=get_gmail_service()
     results=service.users().messages().list(userId='me',maxResults=5).execute()
@@ -66,20 +78,71 @@ def store():
     print('logged successfully')
     conn.close()
 
-def rules():
-    engine = db.create_engine('sqlite:///gmail.db',echo=True)
-    conn = engine.connect()
+def mark_as_unread():
+    engine = db.create_engine('sqlite:///gmail.db', echo=True)
+    engine.connect()
     rules = json.load(open('rules.json'))
     for rule in rules["1"]["criteria"]:
         print(rule['name'], rule['value'])
-        query = "SELECT mail_from  FROM mail WHERE " + "mail_" + rule["name"] + " LIKE '" + rule["value"][1] + "'"
-        result = conn.execute(query)
-        print(result)
+        service = get_gmail_service()
+        service.users().messages().modify(userId='me', id='17a42afd4bf4fa39',body={'addLabelIds': ['UNREAD']}).execute()
+
+def mark_as_read():
+    rules = json.load(open('rules.json'))
+    for rule in rules["1"]["criteria"]:
+        print(rule['name'], rule['value'])
+        service = get_gmail_service()
+        service.users().messages().modify(userId='me', id='17a42afd4bf4fa39',body={'removeLabelIds': ['UNREAD']}).execute()
+
+def starred():
+    engine = db.create_engine('sqlite:///gmail.db', echo=True)
+    engine.connect()
+    rules = json.load(open('rules.json'))
+    for rule in rules["1"]["criteria"]:
+        print(rule['name'], rule['value'])
         service = get_gmail_service()
         service.users().messages().modify(userId='me', id='17a42afd4bf4fa39', body={'addLabelIds': ['STARRED']}).execute()
+
+def archive():
+    engine = db.create_engine('sqlite:///gmail.db', echo=True)
+    engine.connect()
+    rules = json.load(open('rules.json'))
+    for rule in rules["1"]["criteria"]:
+        print(rule['name'], rule['value'])
+        service = get_gmail_service()
+        service.users().messages().modify(userId='me', id='17a42afd4bf4fa39', body={'addLabelIds': ['INBOX']}).execute()
+
+def add_label():
+    service = get_gmail_service()
+    label={
+        "labelListVisibility":"labelShow",
+        "messageListVisibility":"show",
+        "name":"Received"
+    }
+    result=service.users().labels().create(userId='me', body=label).execute()
+    print(result)
+
+# def rules():
+#     engine = db.create_engine('sqlite:///gmail.db',echo=True)
+#     conn = engine.connect()
+#     rules = json.load(open('rules.json'))
+#     for rule in rules["1"]["criteria"]:
+#         print(rule['name'], rule['value'])
+#         query = "SELECT mail_from  FROM mail WHERE " + "mail_" + rule["name"] + " LIKE '" + rule["value"][1] + "'"
+#         result = conn.execute(query)
+#         print(result)
+#         service = get_gmail_service()
+#         service.users().messages().modify(userId='me', id='17a42afd4bf4fa39', body={'addLabelIds': ['STARRED']}).execute()
 
 if __name__ == '__main__':
     # get_email_list()
     # get_email_content('17a42afd4bf4fa39')
     # store()
-    rules()
+    # printlabels()
+    # mark_as_read()
+    #mark_as_unread()
+    #starred()
+    # archive()
+    # add_label()
+
+
